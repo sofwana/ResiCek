@@ -319,15 +319,14 @@
             if (inputResi) inputResi.value = awb.replace(/[^\w]/gi, "").substring(0, 17);
             if (optianExpedisi) optianExpedisi.value = courier;
 
-            // Setup API Token & Proxy URL
+            // Setup API Token
             const token = "6b7fd2014263c3ec5e8d927d879ed8fcbaff318d642a4e40b0df4a3a2f866d83";
-            const targetUrl = `https://api.binderbyte.com/v1/track?api_key=${token}&courier=${courier}&awb=${awb}`;
             
-            // MENGGUNAKAN CORSPROXY.IO (LEBIH STABIL DARI ALLORIGINS)
-            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+            // Menggunakan Vercel Rewrite Endpoint (Sesuai konfigurasi vercel.json)
+            const apiUrl = `/api/track?api_key=${token}&courier=${courier}&awb=${awb}`;
 
             // Call API
-            fetchTrackingData(proxyUrl);
+            fetchTrackingData(apiUrl);
         }
 
         async function fetchTrackingData(url) {
@@ -339,9 +338,8 @@
             try {
                 const response = await fetch(url, { method: "GET" });
                 
-                // Menangani error dari proxy jika terjadi
                 if (!response.ok) {
-                     throw new Error("Gagal terhubung ke server proxy/API.");
+                     throw new Error("Gagal terhubung ke server/API. Pastikan konfigurasi vercel.json sudah benar.");
                 }
 
                 const data = await response.json();
