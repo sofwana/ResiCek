@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Resi Paket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2,
+        h3 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        /* Form Styling */
+        
+        .form-container form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        input,
+        select,
+        button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        input {
+            flex: 2;
+        }
+        
+        select {
+            flex: 1;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        /* Card Information */
+        
+        .info-card {
+            text-align: center;
+            padding: 20px;
+            background: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            margin-bottom: 20px;
+        }
+        /* Utilities Class */
+        
+        .display-false {
+            display: none !important;
+        }
+        
+        .flex {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        /* Table Summary Styling */
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        table td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        table td:nth-child(1) {
+            font-weight: bold;
+            width: 120px;
+        }
+        /* History / Timeline Styling */
+        
+        #container-fill {
+            border-top: 2px dashed #ccc;
+            padding-top: 20px;
+        }
+        
+        .progress-section {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        /* Bagian Kiri (Tanggal/Waktu) */
+        
+        .progress-section>div:first-child {
+            flex: 1;
+            text-align: right;
+            padding-right: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .progress-section>div:first-child p {
+            margin: 2px 0;
+        }
+        /* Bulatan (Radio) */
+        
+        .radio {
+            width: 14px;
+            height: 14px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            margin-top: 4px;
+            position: relative;
+            z-index: 2;
+        }
+        /* Garis vertikal penghubung antar titik */
+        
+        .radio::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background-color: #ccc;
+            top: 14px;
+            left: 6px;
+            z-index: 1;
+        }
+        /* Sembunyikan garis di elemen terakhir agar rapi */
+        
+        .progress-history .progress-section:last-child .radio::after {
+            display: none;
+        }
+        /* Bagian Kanan (Deskripsi Status) */
+        
+        .progress-section>div:last-child {
+            flex: 2;
+            padding-left: 20px;
+            text-align: left;
+        }
+        
+        .progress-section>div:last-child p {
+            margin: 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Cek Resi Paket Anda</h2>
+
+        <!-- Form Pencarian -->
+        <div class="form-container">
+            <form action="" method="GET">
+                <input type="text" id="inputResi" name="awb" placeholder="Masukkan Nomor Resi..." required>
+                <select id="optianExpedisi" name="courier" required>
+                    <option value="" disabled selected>Pilih Kurir</option>
+                    <option value="jne">JNE</option>
+                    <option value="jnt">J&T Express</option>
+                    <option value="sicepat">SiCepat</option>
+                    <option value="anteraja">AnterAja</option>
+                    <option value="ninja">Ninja Express</option>
+                    <option value="pos">POS Indonesia</option>
+                    <option value="tiki">TIKI</option>
+                    <option value="spx">Shopee Express</option>
+                </select>
+                <button type="submit">Lacak Paket</button>
+            </form>
+        </div>
+
+        <!-- Tampilan Info Awal (Sebelum Melacak) -->
+        <div class="info-card">
+            <p>Silakan masukkan nomor resi dan pilih kurir untuk melacak posisi paket Anda.</p>
+        </div>
+
+        <!-- Container Hasil Pelacakan -->
+        <div class="body-card flex">
+            <!-- Tempat Summary/Detail -->
+            <div id="summary" class="display-false"></div>
+
+            <!-- Tempat Riwayat/History -->
+            <div id="container-fill" class="display-false">
+                <h3>Riwayat Perjalanan</h3>
+                <div class="progress-history"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bodyCard = document.querySelector(".body-card"),
+            summary = document.querySelector("#summary"),
+            infoCard = document.querySelector(".info-card"),
+            historyFill = document.querySelector("#container-fill"),
+            progressHistory = document.querySelector(".progress-history");
+
+        const inputResi = document.querySelector("#inputResi");
+        const optianExpedisi = document.querySelector("#optianExpedisi");
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const courier = urlParams.get("courier");
+        const awb = urlParams.get("awb");
+
+        if (awb && courier) {
+            let token = "6b7fd2014263c3ec5e8d927d879ed8fcbaff318d642a4e40b0df4a3a2f866d83";
+            let urlApi = `https://api.binderbyte.com/v1/track?api_key=${token}&courier=${courier}&awb=${awb}`;
+
+            if (inputResi) inputResi.value = awb.replace(/[^\w]/gi, "").substring(0, 17);
+            if (optianExpedisi) optianExpedisi.value = courier;
+
+            bodyCard.classList.remove("flex");
+            historyFill.classList.remove("display-false");
+            summary.classList.remove("display-false");
+            infoCard.classList.add("display-false");
+
+            getJSON(urlApi);
+        }
+
+        function getJSON(url) {
+            summary.innerHTML = "<p style='text-align:center'>Melacak paket...</p>";
+            progressHistory.innerHTML = "";
+
+            fetch(url, {
+                    method: "GET",
+                })
+                .then(async(response) => {
+                    const data = await response.json();
+                    if (!response.ok || data.status !== 200) {
+                        throw new Error(
+                            data.message || "Terjadi kesalahan pada jaringan/server.",
+                        );
+                    }
+                    return data;
+                })
+                .then((data) => {
+                    const result = data.data;
+
+                    summary.innerHTML = `<table>
+                    <tr><td>No Resi</td><td>:</td><td>${result.summary.awb}</td></tr>
+                    <tr><td>Courier</td><td>:</td><td>${result.summary.courier.toUpperCase()}</td></tr>
+                    <tr><td>Service</td><td>:</td><td>${result.summary.service}</td></tr>
+                    <tr><td>Shipper</td><td>:</td><td>${result.detail.shipper} <br />${result.detail.origin}</td></tr>
+                    <tr><td>Receiver</td><td>:</td><td>${result.detail.receiver} <br />${result.detail.destination}</td></tr>
+                    <tr><td>Status</td><td>:</td><td><strong>${result.summary.status}</strong></td></tr>
+                </table>`;
+
+                    progressHistory.innerHTML = "";
+                    if (result.history && result.history.length > 0) {
+                        result.history.forEach((e) => {
+                            let date = e.date.split(" ");
+                            let dateStr = date[0] || "-";
+                            let timeStr = date[1] || "-";
+
+                            progressHistory.innerHTML += `<div class="progress-section flex">
+                            <div style="text-align: right">
+                                <p>${dateStr}</p>
+                                <p>${timeStr}</p>
+                                <p>${result.summary.courier.toUpperCase()}</p>
+                            </div>
+                            <div class="radio"></div>
+                            <div style="text-align: left">
+                                <p>${e.desc}</p>
+                            </div>
+                        </div>`;
+                        });
+                    } else {
+                        progressHistory.innerHTML = `<p style="text-align:center;">Riwayat perjalanan belum tersedia.</p>`;
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error Fetching Data:", error);
+                    summary.innerHTML = `<p style="color: red; text-align: center;">Gagal melacak: ${error.message}</p>`;
+                    progressHistory.innerHTML = "";
+                });
+        }
+    </script>
+</body>
+
+</html>
