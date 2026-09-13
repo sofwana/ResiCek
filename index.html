@@ -321,12 +321,13 @@
 
             // Setup API Token
             const token = "6b7fd2014263c3ec5e8d927d879ed8fcbaff318d642a4e40b0df4a3a2f866d83";
+            const targetUrl = `https://api.binderbyte.com/v1/track?api_key=${token}&courier=${courier}&awb=${awb}`;
             
-            // Menggunakan Vercel Rewrite Endpoint (Sesuai konfigurasi vercel.json)
-            const apiUrl = `/api/track?api_key=${token}&courier=${courier}&awb=${awb}`;
+            // Menggunakan Codetabs Proxy (sangat stabil untuk mem-bypass CORS di frontend murni)
+            const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`;
 
             // Call API
-            fetchTrackingData(apiUrl);
+            fetchTrackingData(proxyUrl);
         }
 
         async function fetchTrackingData(url) {
@@ -339,14 +340,14 @@
                 const response = await fetch(url, { method: "GET" });
                 
                 if (!response.ok) {
-                     throw new Error("Gagal terhubung ke server/API. Pastikan konfigurasi vercel.json sudah benar.");
+                     throw new Error("Gagal mengambil data dari server. Silakan coba beberapa saat lagi.");
                 }
 
                 const data = await response.json();
 
                 // Validasi response dari BinderByte
                 if (data.status !== 200) {
-                    throw new Error(data.message || "Resi tidak ditemukan atau terjadi kesalahan server.");
+                    throw new Error(data.message || "Resi tidak ditemukan atau terjadi kesalahan dari pihak ekspedisi.");
                 }
 
                 renderData(data.data);
@@ -374,11 +375,11 @@
                 </tr>
                 <tr>
                     <td>Pengirim</td>
-                    <td>${result.detail.shipper} <br> <small style="color:#6b7280">${result.detail.origin}</small></td>
+                    <td>${result.detail.shipper || '-'} <br> <small style="color:#6b7280">${result.detail.origin || ''}</small></td>
                 </tr>
                 <tr>
                     <td>Penerima</td>
-                    <td>${result.detail.receiver} <br> <small style="color:#6b7280">${result.detail.destination}</small></td>
+                    <td>${result.detail.receiver || '-'} <br> <small style="color:#6b7280">${result.detail.destination || ''}</small></td>
                 </tr>
                 <tr>
                     <td>Status</td>
