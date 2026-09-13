@@ -1,185 +1,256 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Resi Paket</title>
+    <title>Lacak Paket Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
+        :root {
+            --primary-color: #e51b24; /* Merah khas J&T */
+            --primary-hover: #c4151e;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
-            color: #333;
+            padding: 0;
         }
-        
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 20px;
+        }
+
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 40px auto;
         }
-        
-        h2,
-        h3 {
+
+        .header-title {
             text-align: center;
-            color: #4CAF50;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--text-main);
         }
-        /* Form Styling */
-        
-        .form-container form {
-            display: flex;
-            gap: 10px;
+
+        /* Card Style */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             margin-bottom: 20px;
-            flex-wrap: wrap;
         }
+
+        /* Form Styling */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        @media (min-width: 480px) {
+            .form-group {
+                flex-direction: row;
+            }
+        }
+
+        input, select, button {
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(229, 27, 36, 0.1);
+        }
+
+        input { flex: 2; }
+        select { flex: 1; }
         
-        input,
-        select,
         button {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        
-        input {
-            flex: 2;
-        }
-        
-        select {
-            flex: 1;
-        }
-        
-        button {
-            background-color: #4CAF50;
+            background-color: var(--primary-color);
             color: white;
             border: none;
+            font-weight: 600;
             cursor: pointer;
             flex: 1;
         }
-        
+
         button:hover {
-            background-color: #45a049;
+            background-color: var(--primary-hover);
         }
-        /* Card Information */
-        
-        .info-card {
+
+        /* Loading Spinner */
+        .loading-container {
             text-align: center;
-            padding: 20px;
-            background: #e7f3fe;
-            border-left: 6px solid #2196F3;
-            margin-bottom: 20px;
-        }
-        /* Utilities Class */
-        
-        .display-false {
-            display: none !important;
-        }
-        
-        .flex {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        /* Table Summary Styling */
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        
-        table td {
-            padding: 8px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        table td:nth-child(1) {
-            font-weight: bold;
-            width: 120px;
-        }
-        /* History / Timeline Styling */
-        
-        #container-fill {
-            border-top: 2px dashed #ccc;
-            padding-top: 20px;
-        }
-        
-        .progress-section {
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        /* Bagian Kiri (Tanggal/Waktu) */
-        
-        .progress-section>div:first-child {
-            flex: 1;
-            text-align: right;
-            padding-right: 20px;
-            font-size: 0.9em;
-            color: #666;
-        }
-        
-        .progress-section>div:first-child p {
-            margin: 2px 0;
-        }
-        /* Bulatan (Radio) */
-        
-        .radio {
-            width: 14px;
-            height: 14px;
-            background-color: #4CAF50;
-            border-radius: 50%;
-            margin-top: 4px;
-            position: relative;
-            z-index: 2;
-        }
-        /* Garis vertikal penghubung antar titik */
-        
-        .radio::after {
-            content: '';
-            position: absolute;
-            width: 2px;
-            height: 100px;
-            background-color: #ccc;
-            top: 14px;
-            left: 6px;
-            z-index: 1;
-        }
-        /* Sembunyikan garis di elemen terakhir agar rapi */
-        
-        .progress-history .progress-section:last-child .radio::after {
+            padding: 40px 0;
             display: none;
         }
-        /* Bagian Kanan (Deskripsi Status) */
-        
-        .progress-section>div:last-child {
-            flex: 2;
-            padding-left: 20px;
-            text-align: left;
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            margin: 0 auto 16px auto;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Utilities */
+        .hidden { display: none !important; }
+        .error-message {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 500;
+            padding: 20px;
+            background: #fef2f2;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        /* Summary Table */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .summary-table td {
+            padding: 10px 0;
+            vertical-align: top;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-table td:first-child {
+            color: var(--text-muted);
+            width: 100px;
         }
         
-        .progress-section>div:last-child p {
+        .summary-table tr:last-child td { border-bottom: none; }
+
+        .status-badge {
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* J&T Style Timeline */
+        .timeline-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .timeline {
+            list-style: none;
+            padding: 0;
             margin: 0;
-            font-weight: bold;
+        }
+
+        .timeline li {
+            position: relative;
+            padding-left: 32px;
+            padding-bottom: 24px;
+        }
+
+        /* Garis vertikal timeline */
+        .timeline li::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 4px;
+            bottom: -4px;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+
+        /* Hilangkan garis di item terakhir */
+        .timeline li:last-child::before {
+            display: none;
+        }
+
+        /* Titik lingkaran (Default / Masa lalu) */
+        .timeline li::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #d1d5db;
+            border: 3px solid var(--card-bg);
+            box-shadow: 0 0 0 1px var(--border-color);
+        }
+
+        /* Titik lingkaran & Teks (Item Pertama / Paling Baru) */
+        .timeline li:first-child::after {
+            background-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(229, 27, 36, 0.2);
+            border-color: var(--card-bg);
+        }
+
+        .timeline li:first-child .track-desc {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Konten Timeline */
+        .track-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .track-desc {
+            font-size: 14px;
+            color: var(--text-main);
+            line-height: 1.4;
         }
     </style>
 </head>
-
 <body>
 
     <div class="container">
-        <h2>Cek Resi Paket Anda</h2>
-
+        <div class="header-title">Cek Resi Paket</div>
+        
         <!-- Form Pencarian -->
-        <div class="form-container">
-            <form action="" method="GET">
+        <div class="card">
+            <form action="" method="GET" class="form-group">
                 <input type="text" id="inputResi" name="awb" placeholder="Masukkan Nomor Resi..." required>
                 <select id="optianExpedisi" name="courier" required>
                     <option value="" disabled selected>Pilih Kurir</option>
@@ -187,120 +258,149 @@
                     <option value="jnt">J&T Express</option>
                     <option value="sicepat">SiCepat</option>
                     <option value="anteraja">AnterAja</option>
-                    <option value="ninja">Ninja Express</option>
-                    <option value="pos">POS Indonesia</option>
-                    <option value="tiki">TIKI</option>
+                    <option value="ninja">Ninja</option>
+                    <option value="pos">POS</option>
                     <option value="spx">Shopee Express</option>
                 </select>
-                <button type="submit">Lacak Paket</button>
+                <button type="submit">Lacak</button>
             </form>
         </div>
 
-        <!-- Tampilan Info Awal (Sebelum Melacak) -->
-        <div class="info-card">
-            <p>Silakan masukkan nomor resi dan pilih kurir untuk melacak posisi paket Anda.</p>
+        <!-- Animasi Loading -->
+        <div id="loading" class="card loading-container">
+            <div class="spinner"></div>
+            <div class="loading-text">Sedang mencari data paket...</div>
         </div>
 
-        <!-- Container Hasil Pelacakan -->
-        <div class="body-card flex">
-            <!-- Tempat Summary/Detail -->
-            <div id="summary" class="display-false"></div>
+        <!-- Pesan Error -->
+        <div id="errorContainer" class="hidden"></div>
 
-            <!-- Tempat Riwayat/History -->
-            <div id="container-fill" class="display-false">
-                <h3>Riwayat Perjalanan</h3>
-                <div class="progress-history"></div>
+        <!-- Hasil Pelacakan -->
+        <div id="resultContainer" class="hidden">
+            <!-- Informasi Pengiriman -->
+            <div class="card">
+                <table class="summary-table">
+                    <tbody id="summaryContent">
+                        <!-- Data akan disisipkan via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Riwayat Perjalanan (Timeline Step) -->
+            <div class="card">
+                <div class="timeline-title">Riwayat Perjalanan</div>
+                <ul class="timeline" id="historyContent">
+                    <!-- Data timeline akan disisipkan via JS -->
+                </ul>
             </div>
         </div>
     </div>
 
     <script>
-        const bodyCard = document.querySelector(".body-card"),
-            summary = document.querySelector("#summary"),
-            infoCard = document.querySelector(".info-card"),
-            historyFill = document.querySelector("#container-fill"),
-            progressHistory = document.querySelector(".progress-history");
-
+        // DOM Elements
         const inputResi = document.querySelector("#inputResi");
         const optianExpedisi = document.querySelector("#optianExpedisi");
+        
+        const loadingSection = document.querySelector("#loading");
+        const errorContainer = document.querySelector("#errorContainer");
+        const resultContainer = document.querySelector("#resultContainer");
+        
+        const summaryContent = document.querySelector("#summaryContent");
+        const historyContent = document.querySelector("#historyContent");
 
+        // Parse URL Parameters
         const urlParams = new URLSearchParams(window.location.search);
         const courier = urlParams.get("courier");
         const awb = urlParams.get("awb");
 
+        // Execute if parameters exist
         if (awb && courier) {
-            let token = "6b7fd2014263c3ec5e8d927d879ed8fcbaff318d642a4e40b0df4a3a2f866d83";
-            let urlApi = `https://api.binderbyte.com/v1/track?api_key=${token}&courier=${courier}&awb=${awb}`;
-
+            // Restore form values
             if (inputResi) inputResi.value = awb.replace(/[^\w]/gi, "").substring(0, 17);
             if (optianExpedisi) optianExpedisi.value = courier;
 
-            bodyCard.classList.remove("flex");
-            historyFill.classList.remove("display-false");
-            summary.classList.remove("display-false");
-            infoCard.classList.add("display-false");
+            // Setup API Token & Proxy URL
+            const token = "6b7fd2014263c3ec5e8d927d879ed8fcbaff318d642a4e40b0df4a3a2f866d83";
+            const targetUrl = `https://api.binderbyte.com/v1/track?api_key=${token}&courier=${courier}&awb=${awb}`;
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
-            getJSON(urlApi);
+            // Call API
+            fetchTrackingData(proxyUrl);
         }
 
-        function getJSON(url) {
-            summary.innerHTML = "<p style='text-align:center'>Melacak paket...</p>";
-            progressHistory.innerHTML = "";
+        async function fetchTrackingData(url) {
+            // Tampilkan Loading
+            loadingSection.style.display = "block";
+            errorContainer.classList.add("hidden");
+            resultContainer.classList.add("hidden");
 
-            fetch(url, {
-                    method: "GET",
-                })
-                .then(async(response) => {
-                    const data = await response.json();
-                    if (!response.ok || data.status !== 200) {
-                        throw new Error(
-                            data.message || "Terjadi kesalahan pada jaringan/server.",
-                        );
-                    }
-                    return data;
-                })
-                .then((data) => {
-                    const result = data.data;
+            try {
+                const response = await fetch(url, { method: "GET" });
+                const data = await response.json();
 
-                    summary.innerHTML = `<table>
-                    <tr><td>No Resi</td><td>:</td><td>${result.summary.awb}</td></tr>
-                    <tr><td>Courier</td><td>:</td><td>${result.summary.courier.toUpperCase()}</td></tr>
-                    <tr><td>Service</td><td>:</td><td>${result.summary.service}</td></tr>
-                    <tr><td>Shipper</td><td>:</td><td>${result.detail.shipper} <br />${result.detail.origin}</td></tr>
-                    <tr><td>Receiver</td><td>:</td><td>${result.detail.receiver} <br />${result.detail.destination}</td></tr>
-                    <tr><td>Status</td><td>:</td><td><strong>${result.summary.status}</strong></td></tr>
-                </table>`;
+                // Validasi response dari BinderByte
+                if (!response.ok || data.status !== 200) {
+                    throw new Error(data.message || "Resi tidak ditemukan atau terjadi kesalahan server.");
+                }
 
-                    progressHistory.innerHTML = "";
-                    if (result.history && result.history.length > 0) {
-                        result.history.forEach((e) => {
-                            let date = e.date.split(" ");
-                            let dateStr = date[0] || "-";
-                            let timeStr = date[1] || "-";
+                renderData(data.data);
 
-                            progressHistory.innerHTML += `<div class="progress-section flex">
-                            <div style="text-align: right">
-                                <p>${dateStr}</p>
-                                <p>${timeStr}</p>
-                                <p>${result.summary.courier.toUpperCase()}</p>
-                            </div>
-                            <div class="radio"></div>
-                            <div style="text-align: left">
-                                <p>${e.desc}</p>
-                            </div>
-                        </div>`;
-                        });
-                    } else {
-                        progressHistory.innerHTML = `<p style="text-align:center;">Riwayat perjalanan belum tersedia.</p>`;
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error Fetching Data:", error);
-                    summary.innerHTML = `<p style="color: red; text-align: center;">Gagal melacak: ${error.message}</p>`;
-                    progressHistory.innerHTML = "";
+            } catch (error) {
+                // Tampilkan Error
+                errorContainer.innerHTML = `<div class="error-message">Gagal Melacak: ${error.message}</div>`;
+                errorContainer.classList.remove("hidden");
+            } finally {
+                // Sembunyikan Loading
+                loadingSection.style.display = "none";
+            }
+        }
+
+        function renderData(result) {
+            // 1. Render Summary Data
+            summaryContent.innerHTML = `
+                <tr>
+                    <td>No Resi</td>
+                    <td><strong>${result.summary.awb}</strong></td>
+                </tr>
+                <tr>
+                    <td>Kurir</td>
+                    <td><strong>${result.summary.courier.toUpperCase()}</strong> - ${result.summary.service}</td>
+                </tr>
+                <tr>
+                    <td>Pengirim</td>
+                    <td>${result.detail.shipper} <br> <small style="color:#6b7280">${result.detail.origin}</small></td>
+                </tr>
+                <tr>
+                    <td>Penerima</td>
+                    <td>${result.detail.receiver} <br> <small style="color:#6b7280">${result.detail.destination}</small></td>
+                </tr>
+                <tr>
+                    <td>Status</td>
+                    <td><span class="status-badge">${result.summary.status}</span></td>
+                </tr>
+            `;
+
+            // 2. Render History Timeline
+            historyContent.innerHTML = "";
+            
+            if (result.history && result.history.length > 0) {
+                result.history.forEach((item) => {
+                    // Membuat elemen list (li) untuk setiap riwayat
+                    const li = document.createElement("li");
+                    
+                    li.innerHTML = `
+                        <div class="track-date">${item.date}</div>
+                        <div class="track-desc">${item.desc}</div>
+                    `;
+                    historyContent.appendChild(li);
                 });
+            } else {
+                historyContent.innerHTML = `<li><div class="track-desc">Riwayat perjalanan belum tersedia.</div></li>`;
+            }
+
+            // Tampilkan container hasil
+            resultContainer.classList.remove("hidden");
         }
     </script>
 </body>
-
 </html>
