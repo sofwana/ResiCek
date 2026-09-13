@@ -5,106 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cek Resi Paket - BinderByte</title>
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 600px;
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-top: 0;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: bold;
-        }
-        input[type="text"], select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .result-container {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-        .status-box {
-            background-color: #e9f7ef;
-            padding: 15px;
-            border-left: 5px solid #28a745;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
-        .timeline {
-            list-style: none;
-            padding: 0;
-        }
-        .timeline li {
-            padding: 10px 0;
-            border-bottom: 1px dashed #ccc;
-        }
-        .timeline li:last-child {
-            border-bottom: none;
-        }
-        .date {
-            font-size: 0.85em;
-            color: #777;
-            display: block;
-            margin-bottom: 3px;
-        }
-        .desc {
-            color: #333;
-        }
-        .error {
-            color: #dc3545;
-            background-color: #f8d7da;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #f5c6cb;
-            text-align: center;
-        }
-        .loading {
-            text-align: center;
-            color: #007bff;
-            font-weight: bold;
-        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 100%; max-width: 600px; }
+        h2 { text-align: center; color: #333; margin-top: 0; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #555; font-weight: bold; }
+        input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        .result-container { margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+        .status-box { background-color: #e9f7ef; padding: 15px; border-left: 5px solid #28a745; margin-bottom: 15px; border-radius: 4px; }
+        .timeline { list-style: none; padding: 0; }
+        .timeline li { padding: 10px 0; border-bottom: 1px dashed #ccc; }
+        .timeline li:last-child { border-bottom: none; }
+        .date { font-size: 0.85em; color: #777; display: block; margin-bottom: 3px; }
+        .desc { color: #333; }
+        .error { color: #dc3545; background-color: #f8d7da; padding: 10px; border-radius: 5px; border: 1px solid #f5c6cb; text-align: center; }
+        .loading { text-align: center; color: #007bff; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -115,6 +34,7 @@
     <div class="form-group">
         <label for="courier">Pilih Ekspedisi</label>
         <select id="courier">
+            <option value="spx">Shopee Express</option>
             <option value="jne">JNE</option>
             <option value="jnt">J&T Express</option>
             <option value="sicepat">SiCepat</option>
@@ -123,112 +43,19 @@
             <option value="tiki">TIKI</option>
             <option value="ninja">Ninja Xpress</option>
             <option value="lion">Lion Parcel</option>
-            <option value="spx">Shopee Express</option>
         </select>
     </div>
     
     <div class="form-group">
         <label for="awb">Nomor Resi</label>
-        <input type="text" id="awb" placeholder="Contoh: JP1234567890">
+        <input type="text" id="awb" placeholder="Contoh: SPXID057959041517">
     </div>
     
-    <button onclick="cekResi()" id="btn-cek">Lacak Paket</button>
+    <button id="btn-cek">Lacak Paket</button>
 
-    <div id="result" class="result-container" style="display: none;">
-        <!-- Hasil pencarian akan muncul di sini -->
-    </div>
+    <div id="result" class="result-container" style="display: none;"></div>
 </div>
 
-<script>
-    const API_KEY = "sk_tytmmq2pcp6xlvrflkml95bq8a1inllrohhgahsgg0nd0ibdfh4upmahpb8mfzoh";
-
-    async function cekResi() {
-        const awb = document.getElementById("awb").value.trim();
-        const courier = document.getElementById("courier").value;
-        const resultDiv = document.getElementById("result");
-        const btnCek = document.getElementById("btn-cek");
-
-        if (!awb) {
-            resultDiv.style.display = "block";
-            resultDiv.innerHTML = `<div class="error">Silakan masukkan nomor resi terlebih dahulu!</div>`;
-            return;
-        }
-
-        resultDiv.style.display = "block";
-        resultDiv.innerHTML = `<div class="loading">Sedang melacak paket... Mohon tunggu.</div>`;
-        btnCek.disabled = true;
-
-        try {
-            const url = `https://api.binderbyte.com/v1/track?api_key=${API_KEY}&courier=${courier}&awb=${awb}`;
-            const response = await fetch(url);
-            const data = await response.json();
-
-            // Cek status HTTP dari API
-            if (!response.ok || data.status !== 200) {
-                const pesanError = data.message || "Resi tidak ditemukan atau kombinasi kurir salah.";
-                resultDiv.innerHTML = `<div class="error"><strong>Gagal (Error ${response.status || data.status}):</strong> ${pesanError}</div>`;
-                btnCek.disabled = false;
-                return;
-            }
-
-            // PENGAMAN: Cek apakah objek data summary dan history benar-benar ada
-            if (!data.data || !data.data.summary || !data.data.history) {
-                // Jika data ada tapi formatnya berbeda, tampilkan JSON mentahnya untuk dianalisis
-                resultDiv.innerHTML = `
-                    <div class="error" style="background-color:#fff3cd; color:#856404; border-color:#ffeeba;">
-                        <strong>Status 200 OK:</strong> Tapi struktur data tidak sesuai harapan. Berikut data mentahnya:
-                    </div>
-                    <pre style="background:#333; color:#0f0; padding:15px; border-radius:5px; overflow-x:auto; font-size:12px; margin-top:10px;">${JSON.stringify(data, null, 2)}</pre>
-                `;
-                btnCek.disabled = false;
-                return;
-            }
-
-            // Jika formatnya benar, tampilkan seperti biasa
-            const summary = data.data.summary;
-            const history = data.data.history;
-
-            let html = `
-                <div class="status-box">
-                    <h3 style="margin-top:0; color:#28a745;">Status: ${summary.status || 'Tidak diketahui'}</h3>
-                    <p><strong>Kurir:</strong> ${summary.courier || '-'}</p>
-                    <p><strong>Pengirim:</strong> ${summary.shipper || '-'}</p>
-                    <p><strong>Penerima:</strong> ${summary.receiver || '-'}</p>
-                    <p><strong>Asal:</strong> ${summary.origin || '-'}</p>
-                    <p><strong>Tujuan:</strong> ${summary.destination || '-'}</p>
-                </div>
-                <h4>Riwayat Perjalanan:</h4>
-                <ul class="timeline">
-            `;
-
-            if (history && history.length > 0) {
-                history.forEach(item => {
-                    html += `
-                        <li>
-                            <span class="date">${item.date || '-'}</span>
-                            <span class="desc">${item.desc || '-'}</span>
-                        </li>
-                    `;
-                });
-            } else {
-                html += `<li><span class="desc">Belum ada riwayat perjalanan.</span></li>`;
-            }
-
-            html += `</ul>`;
-            resultDiv.innerHTML = html;
-
-        } catch (error) {
-            // Tampilkan error Javascript yang sebenarnya di layar (bukan pesan default lagi)
-            resultDiv.innerHTML = `
-                <div class="error">
-                    <strong>Terjadi Kesalahan Script:</strong> ${error.message}
-                </div>`;
-            console.error(error); // Cek Console (F12) untuk detailnya
-        } finally {
-            btnCek.disabled = false;
-        }
-    }
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
