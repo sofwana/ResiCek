@@ -1,6 +1,5 @@
 const API_KEY = "sk_tytmmq2pcp6xlvrflkml95bq8a1inllrohhgahsgg0nd0ibdfh4upmahpb8mfzoh";
 
-// Menyambungkan tombol Lacak Paket dengan fungsi cekResi
 document.getElementById('btn-cek').addEventListener('click', cekResi);
 
 async function cekResi() {
@@ -22,12 +21,17 @@ async function cekResi() {
     try {
         const targetUrl = `https://api.binderbyte.com/v1/track?api_key=${API_KEY}&courier=${courier}&awb=${awb}`;
         
-        // Proxy AllOrigins untuk melewati keamanan CORS
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+        // Menggunakan corsproxy.io yang lebih stabil
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
         
         const response = await fetch(proxyUrl);
+        
+        // Cek jika proxy error
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
         const data = await response.json();
 
+        // Cek jika API resi error (misal resi salah)
         if (data.status !== 200) {
             const pesanError = data.message || "Resi tidak ditemukan atau kombinasi kurir salah.";
             resultDiv.innerHTML = `<div class="error"><strong>Gagal:</strong> ${pesanError}</div>`;
@@ -70,9 +74,10 @@ async function cekResi() {
     } catch (error) {
         resultDiv.innerHTML = `
             <div class="error">
-                <strong>Gagal Melacak:</strong> Terjadi kesalahan jaringan. Coba lagi dalam beberapa saat.
-                <br><br>
-                <small style="color: #721c24;">Detail: ${error.message}</small>
+                <strong>Browser Memblokir Request!</strong><br><br>
+                Hal ini terjadi karena browser atau ekstensi Anda memblokir koneksi ke server pelacakan.<br><br>
+                <strong>💡 Solusi:</strong> Matikan <em>Adblock / uBlock / Brave Shields</em> di website ini, lalu coba lagi.
+                <br><br><small style="color: #721c24;">Detail Log: ${error.message}</small>
             </div>`;
         console.error("Error Detail:", error);
     } finally {
