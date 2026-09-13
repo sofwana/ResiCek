@@ -322,7 +322,9 @@
             // Setup API Token & Proxy URL
             const token = "6b7fd2014263c3ec5e8d927d879ed8fcbaff318d642a4e40b0df4a3a2f866d83";
             const targetUrl = `https://api.binderbyte.com/v1/track?api_key=${token}&courier=${courier}&awb=${awb}`;
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+            
+            // MENGGUNAKAN CORSPROXY.IO (LEBIH STABIL DARI ALLORIGINS)
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
 
             // Call API
             fetchTrackingData(proxyUrl);
@@ -336,10 +338,16 @@
 
             try {
                 const response = await fetch(url, { method: "GET" });
+                
+                // Menangani error dari proxy jika terjadi
+                if (!response.ok) {
+                     throw new Error("Gagal terhubung ke server proxy/API.");
+                }
+
                 const data = await response.json();
 
                 // Validasi response dari BinderByte
-                if (!response.ok || data.status !== 200) {
+                if (data.status !== 200) {
                     throw new Error(data.message || "Resi tidak ditemukan atau terjadi kesalahan server.");
                 }
 
