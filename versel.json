@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/track",
+      "destination": "https://api.binderbyte.com/v1/track"
+    }
+  ]
+}
